@@ -1,0 +1,231 @@
+using System.Net;
+using System.Net.Quic;
+using System.Security.Cryptography;
+
+public class Journal
+{
+
+    public string _fileName = "myJournal.jrnl";
+    public List<Entry> _journal = new List<Entry>();
+    public int _total = 0;
+
+    public Journal(string _fileName, List<Entry> _entries)
+    {
+        this._fileName = _fileName;
+        this._journal = _entries;
+    }
+
+    // public void BootFile()
+    // {
+    //     Console.Write("Would you like to load a journal or create a new journal? (load/new) ");
+    //     string response = Console.ReadLine();
+    //     if (response == "load")
+    //     {
+    //         LoadJournal();
+    //     }
+    // }
+
+    // public void Menu()
+    // {
+    //     bool done = true;
+    //     do
+    //     {
+    //         Thread.Sleep(2000);
+    //         Console.Clear();
+    //         Console.WriteLine("\nWhat option would you like to do? ");
+    //         Console.WriteLine("  1. Create a New Entry\n  2. View your journal\n  3. Save your journal\n  4. Load your journal\n  5. Quit");
+    //         Console.Write("Please choose an option number: ");
+    //         string choice = Console.ReadLine();
+    //         int num = int.Parse(choice);
+    //         if (num == 1)
+    //         {
+    //             NewEntry(_fileName);
+    //         }
+    //         else if (num == 2)
+    //         {
+    //             foreach (Entry entry in _journal){
+    //                 entry.DisplayEntry();
+    //             }
+    //         }
+    //         else if (num == 3)
+    //         {
+    //             SaveJournal(_journal);
+    //         }
+    //         else if (num == 4)
+    //         {
+    //             LoadJournal();
+    //         }
+    //         else if (num == 5)
+    //         {
+    //             done = false;
+    //             Console.WriteLine("\nThank you for writing in your journal today!\nHave a nice day!");
+    //             Thread.Sleep(2000);
+    //         }
+    //     } while (done);
+    // }
+
+    public void NewEntry()
+    {
+        Entry entry = new Entry("", "");
+        Console.Write("\nWould you like a prompt? ");
+        string response = Console.ReadLine();
+        Console.Write(entry._date);
+        Prompt prompt = new Prompt();
+        entry._myPrompt = prompt.SelectPrompt(response);
+        entry._myEntry = Console.ReadLine();
+        Console.Write("\nWould you like to save the entry? (yes/no) ");
+        string save = Console.ReadLine();
+        if (save == "yes")
+        {
+            _journal.Add(entry);
+            _total++;
+        }
+    }
+
+    public void QuickLoad(string _fileName)
+    {
+        string[] lines = System.IO.File.ReadAllLines(_fileName);
+
+        foreach (string line in lines)
+        {
+            string[] parts = line.Split(" %%");
+
+            string date = parts[0];
+            string entryTitle = parts[1];
+            string entry = parts[2];
+
+            Entry entry1 = new Entry(entryTitle, entry, date);
+            _journal.Add(entry1);
+            _total++;
+        }
+    }
+
+    public void LoadJournal()
+    {
+        if (_journal.Any() && _fileName != "")
+        {
+            Console.Write("Would you like to save the previous journal before loading a new one? (yes/no) ");
+            string response = Console.ReadLine();
+            if (response == "yes")
+            {
+                SaveJournal();
+                _journal.Clear();
+                _total = 0;
+            }
+        }
+        if (_journal.Any() && _fileName == "")
+        {
+            Console.Write("Would you like to append the entries to a journal? (yes/no) ");
+            string response = Console.ReadLine();
+            if (response == "no")
+            {
+                _journal.Clear();
+                _total = 0;
+            }
+        }
+        Console.Write("\nWhat is the name of the journal file you'd like to load? ");
+        string file = Console.ReadLine();
+        if (!file.EndsWith(".jrnl"))
+        {
+            file = file + ".jrnl";
+        }
+        bool exists = File.Exists(file);
+        if (exists)
+        {
+            _fileName = file;
+        }
+        else
+        {
+            Console.WriteLine("\nError 404: File not found.");
+            Console.WriteLine($"Would you like to create the file: {file}?");
+            string response = Console.ReadLine();
+            if (response == "yes")
+            {
+                Console.WriteLine("File created.");
+                _fileName = file;
+            }
+        }
+
+        string[] lines = System.IO.File.ReadAllLines(_fileName);
+
+        foreach (string line in lines)
+        {
+            string[] parts = line.Split(" %%");
+
+            string date = parts[0];
+            string entryTitle = parts[1];
+            string entry = parts[2];
+
+            Entry entry1 = new Entry(entryTitle, entry, date);
+            _journal.Add(entry1);
+            _total++;
+        }
+    }
+
+    public void SaveJournal()
+    {
+        bool abort = false;
+        if (_fileName == "")
+        {
+            Console.Write("Which file would you like to save to? ");
+            string response = Console.ReadLine();
+            if (!response.EndsWith(".jrnl"))
+            {
+                response = response + ".jrnl";
+            }
+            if (File.Exists(response))
+            {
+                _fileName = response;
+            }
+            else if (response == "")
+            {
+                abort = true;
+            }
+            else
+            {
+                Console.Write("File does not yet exist. Would you like to create it? (yes/no) ");
+                string response1 = Console.ReadLine();
+                if (response1 == "yes")
+                {
+                    _fileName = response;
+                }
+                else
+                {
+                    abort = true;
+                }
+            }
+        }
+        if (!abort || _fileName != "")
+        {
+            using (StreamWriter outputFile = new StreamWriter(_fileName))
+            {
+                foreach (Entry entry in _journal)
+                {
+                    outputFile.WriteLine(entry._date + " %%" + entry._myPrompt + " %% " + entry._myEntry);
+                }
+            }
+            Console.Write("Saving");
+            Thread.Sleep(1000);
+            Console.Write(".");
+            Thread.Sleep(1000);
+            Console.Write(".");
+            Thread.Sleep(1000);
+            Console.WriteLine(".");
+            Thread.Sleep(1000);
+            Console.WriteLine("Save successful.");
+        }
+        else
+        {
+            Console.WriteLine("Save cancelled.");
+        }
+    }
+
+    public void DisplayAll()
+    {
+        Console.WriteLine();
+        foreach (Entry entry in _journal)
+        {
+            entry.DisplayEntry();
+        }
+    }
+}
