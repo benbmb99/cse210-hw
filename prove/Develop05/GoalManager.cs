@@ -177,7 +177,7 @@ public class GoalManager
             else if (response == "help")
             {
                 Console.Clear();
-                Console.WriteLine("There are four types of goals:\n  1. Simple Goal - (A basic goal that is checked off once accomplished.)\n  2. Eternal Goal - (A goal that can be accomplished, but it's never completed.)\n  3. Checklist Goal - (A goal to do multiple times, no specific time frame.)");
+                Console.WriteLine("There are four types of goals:\n  1. Simple Goal - (A basic goal that is checked off once accomplished.)\n  2. Eternal Goal - (A goal that can be accomplished, but it's never completed.)\n  3. Checklist Goal - (A goal to do multiple times, no specific time frame.)\n  4. Daily Goal - (A goal accomplished once a day, and keeps track of your daily streak!)");
                 Console.Write("Which goal would you like? ");
             }
             else

@@ -11,7 +11,7 @@ using System;
 //level 1 is 100 points, to get to level 2 it's 200 points (total 300 pts), to get to level 3 it's 300 points (total
 //500 pts), etc. I also created a little congratulations celebration every time you level up! I also enhanced several
 //bits of the saving and loading schemes to prevent user error.
-//Oh, and I also created a fourth "Daily Goal" option, too. B)
+//Oh, and I also created a fourth "Daily Goal" option, too. Yes, it keeps track of your day-to-day streak. B) 
 
 class Program
 {
