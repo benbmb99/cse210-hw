@@ -109,7 +109,7 @@ public class GoalManager
     {
         Console.Clear();
         bool done = false;
-        Console.WriteLine("\nThere are three types of goals:\n  1. Simple Goal\n  2. Eternal Goal\n  3. Checklist Goal");
+        Console.WriteLine("\nThere are four types of goals:\n  1. Simple Goal\n  2. Eternal Goal\n  3. Checklist Goal\n  4. Daily Goal");
         Console.Write("Which goal would you like? (type 'help' for more information.) ");
         do
         {
@@ -160,10 +160,24 @@ public class GoalManager
                 Console.WriteLine("Goal Added!");
                 done = true;
             }
+            else if (response == "4")
+            {
+                Console.Clear();
+                Console.Write("What is a short name for your goal? ");
+                string name = Console.ReadLine();
+                Console.Write("What is a short description of your goal? ");
+                string description = Console.ReadLine();
+                Console.Write("How many points is it worth per achievment? ");
+                string points = Console.ReadLine();
+                DailyGoal a = new(name, description, points);
+                _goals.Add(a);
+                Console.WriteLine("Goal Added!");
+                done = true;
+            }
             else if (response == "help")
             {
                 Console.Clear();
-                Console.WriteLine("There are three types of goals:\n  1. Simple Goal - (A basic goal that is checked off once accomplished.)\n  2. Eternal Goal - (A goal accomplished daily, but it's never completed.)\n  3. Checklist Goal - (A goal to do multiple times, no specific time frame.)");
+                Console.WriteLine("There are four types of goals:\n  1. Simple Goal - (A basic goal that is checked off once accomplished.)\n  2. Eternal Goal - (A goal that can be accomplished, but it's never completed.)\n  3. Checklist Goal - (A goal to do multiple times, no specific time frame.)");
                 Console.Write("Which goal would you like? ");
             }
             else
@@ -342,20 +356,25 @@ public class GoalManager
                     SimpleGoal s = new(parts[1], parts[2], parts[3], complete);
                     _goals.Add(s);
                 }
-                else if (type == "E")
+                else if (type == "D")
                 {
                     bool complete = false;
                     if (parts[6] == "True")
                     {
                         complete = true;
                     }
-                    EternalGoal e = new(parts[1], parts[2], parts[3], parts[4], int.Parse(parts[5]), complete);
+                    DailyGoal e = new(parts[1], parts[2], parts[3], parts[4], int.Parse(parts[5]), complete);
                     _goals.Add(e);
                 }
                 else if (type == "C")
                 {
                     ChecklistGoal c = new(parts[1], parts[2], parts[3], parts[4], parts[5], parts[6]);
                     _goals.Add(c);
+                }
+                else if (type == "E")
+                {
+                    EternalGoal e = new(parts[1], parts[2], parts[3]);
+                    _goals.Add(e);
                 }
             }
             LevelChecker();
@@ -433,27 +452,34 @@ public class GoalManager
         }
     }
 
-    public void LevelHelp(){
+    public void LevelHelp()
+    {
         Console.WriteLine("These are the number of points for each level: ");
         int x = 1;
         int p = 0;
-        while(x<=20){
-            int s = x*100+p;
+        while (x <= 20)
+        {
+            int s = x * 100 + p;
             Console.WriteLine($"Level {x}: {s} points");
             x++;
-            p=s;
+            p = s;
         }
         Console.WriteLine("Press enter to continue.");
         Console.ReadLine();
     }
 
-    public void LevelBar(){
+    public void LevelBar()
+    {
         double x = (_score - _previousLevelUp) / (2 * _level);
         Console.Write($"{_previousLevelUp} [");
-        for(int i = 1; i<=50; i++){
-            if(x>i){
+        for (int i = 1; i <= 50; i++)
+        {
+            if (x > i)
+            {
                 Console.Write("|");
-            }else if(x<=i){
+            }
+            else if (x <= i)
+            {
                 Console.Write(" ");
             }
         }
