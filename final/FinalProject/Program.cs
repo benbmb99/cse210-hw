@@ -1,9 +1,12 @@
 using System;
 
-class Program
+class Programs
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello FinalProject World!");
+        TotalWealthControlLLC company = new();
+        company.SetPlayers();
+        company.CreatePlayers();
+        company.TakeTurns();
     }
 }
