@@ -45,7 +45,7 @@ public class TotalWealthControlLLC
         }
     }
 
-    // public void SetCPUs()
+    // public void SetCPUs() //One day :`) Not this timme. Just in here so I can figure it out for next time.
     // {
     //     bool done = false;
     //     do

@@ -9,11 +9,11 @@ DC%%MC%%6%%Inheritance%%Roll dice to get money ([6,8] -> (10); [3-5,9-11] -> (20
 DC%%RDb%%3%%Refinance%%Roll dice to reduce debt ([5,6,8,9] -> 10%; [2-4,10-12] -> 20%)%%20-20-20-10-10-0-10-10-20-20-20
 BBC%%2%%Flunked Finals%%Lose money. (Future) Skip conferance next turn.%%2%%withdraw
 //%%2%%Credit Card Declined%%Discard a card from any player.
-CC%%2%%You Won a Drawing%%Draw 2 cards.%%2
+***CC%%2%%You Won a Drawing%%Draw 2 cards.%%2
 PG%%4%%Pell Grant%%Go to school for free or (10)
 BBC%%2%%School Books%%Lose money.%%2%%withdraw
 BBC%%2%%OverDraft%%Lose money%%5%%withdraw
-LL%%2%%Lose your License%%Lose degree(s) for one turn.
+***LL%%2%%Lose your License%%Lose degree(s) for one turn.
 DC%%MC%%MOC%%5%%Annual Review%%Roll dice to gain money equivalent to Job Level ([6,8] -> 1x; [3-5,9-11] -> 2x; [2,12] -> 3x)%%3-2-2-2-1-0-1-2-2-2-3%%job
 DC%%MC%%2%%Bonus%%Roll dice to gain money ([7] -> (2); [5,6,8,9] -> (5); [2-4,10-12] -> (7))%%7-7-7-5-5-2-5-5-7-7-7
 //%%2%%Burglary%%Roll dice to take cards from another player ([7] -> Skip turn; [6,8] -> 1 card; [3-5,9-11] -> 2 cards; [2,12] -> 3 cards)
@@ -25,7 +25,7 @@ BBC%%2%%Buy New Tires%%Lose money%%5%%withdraw
 //%%2%%Bernie Made-Off%%Rolling Dice to take money from another player ([7] -> Skip turn; [6,8] -> 20%; [3-5,9-11] -> 50%; [2,12] -> 100%)
 BAC%%1%%Demoted%%Lose a job level.%%leveldown%%job
 CDC%%1%%Accident%%Roll dice to lose money ([6,8] -> (-5); [3-5,9-11] -> (-10); [2,12] -> No damage; [7] -> Totaled)
-CC%%1%%Sweepstakes%%Draw 3 cards%%3
+***CC%%1%%Sweepstakes%%Draw 3 cards%%3
 DC%%LC%%1%%Sick%%Skip a turn unless [4,9]; Lose a level%%1-s-0-s-s-s-s-0-s-s-1%%jobskip
 DC%%LC%%1%%Overslept%%Skip a turn unless [5,9]; Lose a level%%1-s-0-s-s-s-s-0-s-s-1%%jobskip
 //%%1%%Internship%%Play on any player to keep them from getting money their next turn unless [2,12]
