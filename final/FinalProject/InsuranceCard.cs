@@ -13,6 +13,7 @@ public class InsuranceCard : DiceCard
     public override void Use()
     {
         Console.WriteLine("You can't use this now.");
+        Thread.Sleep(2000);
     }
 
     public bool CheckInsurance()

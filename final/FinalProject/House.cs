@@ -1,10 +1,9 @@
 public class House : Property
 {
-    private int _id;
 
-    public House(string name, int cost, int id) : base(name, cost)
+    public House(string name, int cost, int id) : base(name, cost, id)
     {
-        _id = id;
+
     }
 
     public void BurnItDown()
@@ -19,8 +18,9 @@ public class House : Property
         _owner = "Unowned";
     }
 
-    public int GetID()
+    public override void SellEnd(Bank bank)
     {
-        return _id;
+        int x = GetCost();
+        bank.FinalSell(x);
     }
 }

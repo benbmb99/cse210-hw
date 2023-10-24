@@ -9,7 +9,7 @@ public class TotalWealthControlLLC
     private List<WealthManager> _players = new();
     private CardDeck _cd = new();
     private bool _gameOver = false;
-    private string _winner;
+    private ArrayList _finalValues = new();
 
 
     public void SetPlayers()
@@ -27,10 +27,18 @@ public class TotalWealthControlLLC
             {
                 Exception e = new();
                 _numOfPlayers = int.Parse(Console.ReadLine());
-                if (_numOfPlayers > 18)
+                if (_numOfPlayers > 4)
                 {
-                    Console.WriteLine("You can't have more than 18 players at this time.");
-                    throw e;
+                    Console.WriteLine("We don't recommend more than 4 players.\nAre you sure you want to continue? ");
+                    string response = Console.ReadLine().ToLower();
+                    if (response == "yes")
+                    {
+                        done = true;
+                    }
+                    else
+                    {
+                        throw e;
+                    }
                 }
                 done = true;
             }
@@ -40,7 +48,8 @@ public class TotalWealthControlLLC
                 Thread.Sleep(2000);
             }
         } while (!done);
-        if(_numOfPlayers == 1){
+        if (_numOfPlayers == 1)
+        {
             Console.WriteLine("WARNING: Single player mode is still in beta stages.");
         }
     }
@@ -100,7 +109,7 @@ public class TotalWealthControlLLC
                 _cd = (CardDeck)final[3];
                 if (_gameOver)
                 {
-                    _winner = a.ReturnName();
+                    //     _winner = a.ReturnName();
                     break;
                 }
             }
@@ -110,14 +119,44 @@ public class TotalWealthControlLLC
 
     public void GameOver()
     {
-        Celebrate();
+        List<Car> winnersCars = new();
+        List<House> winnersHouses = new();
+        int winnersValue = -4000;
+        string winner = "";
+        foreach (WealthManager w in _players)
+        {
+            _finalValues.Add(w.EndGame());
+        }
+        foreach (ArrayList a in _finalValues)
+        {
+            if ((int)a[2] > winnersValue)
+            {
+                winnersCars = (List<Car>)a[0];
+                winnersHouses = (List<House>)a[1];
+                winnersValue = (int)a[2];
+                winner = (string)a[3];
+            }
+        }
+        Celebrate(winner, winnersValue, winnersCars, winnersHouses);
         Console.WriteLine("Thanks for playing!");
         Thread.Sleep(5000);
     }
 
-    public void Celebrate()
+    public void Celebrate(string winner, int winnerValue, List<Car> winnerCars, List<House> winnerHouses)
     {
-        Console.WriteLine($"Congratulations! {_winner} won!");
+        Console.WriteLine($"Congratulations! {winner} won!");
+        Console.WriteLine($"{winner} ended with:");
+        Console.WriteLine($" {winner}'s Value: ${winnerValue}");
+        Console.WriteLine($" Houses:");
+        foreach (House h in winnerHouses)
+        {
+            Console.WriteLine($"   {h.GetName()}  Value: {h.GetCost()}");
+        }
+        foreach (Car c in winnerCars)
+        {
+            Console.WriteLine($"   {c.GetName()}  Value: {c.GetCost()}");
+        }
+        Console.WriteLine();
         int sec = 5;
         do
         {

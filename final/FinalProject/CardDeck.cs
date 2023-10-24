@@ -148,6 +148,41 @@ public class CardDeck
                 BurnCard burn = new(name, details, quantity, cardType);
                 _allCards.Add(burn);
             }
+            else if (type == "CC")
+            {
+                int quantity = int.Parse(parts[1]);
+                string name = parts[2];
+                string details = parts[3];
+                int amount = int.Parse(parts[4]);
+                CollectCardsCard cc = new(name, details, quantity, amount);
+            }
+            else if (type == "LL")
+            {
+                int quantity = int.Parse(parts[1]);
+                string name = parts[2];
+                string details = parts[3];
+                LoseLicenseCard ll = new(name, details, quantity);
+            }
+            else if (type == "JD")
+            {
+                int quantity = int.Parse(parts[1]);
+                string name = parts[2];
+                string details = parts[3];
+                int amount = int.Parse(parts[4]);
+                string action = parts[5];
+                JuryDutyCard jd = new(name, details, quantity, amount, action);
+                _allCards.Add(jd);
+            }
+            else if (type == "FF")
+            {
+                int quantity = int.Parse(parts[1]);
+                string name = parts[2];
+                string details = parts[3];
+                int amount = int.Parse(parts[4]);
+                string action = parts[5];
+                FlunkedFinalsCard ff = new(name, details, quantity, amount, action);
+                _allCards.Add(ff);
+            }
         }
     }
 
@@ -155,16 +190,23 @@ public class CardDeck
     {
         List<string> index = new();
         List<string> choices = new();
-        foreach (Card c in _allCards)
+        do
         {
-            int x = c.GetQuantity();
-            index.Add(c.GetName());
-            while (x > 0)
+            foreach (Card c in _allCards)
             {
-                choices.Add(c.GetName());
-                x--;
+                int x = c.GetQuantity();
+                index.Add(c.GetName());
+                while (x > 0)
+                {
+                    choices.Add(c.GetName());
+                    x--;
+                }
             }
-        }
+            if (choices.Count() == 0)
+            {
+                Shuffle();
+            }
+        } while (choices.Count() == 0);
         int j = _rand.Next(0, choices.Count());
         int k = index.IndexOf(choices[j]);
         _allCards[k].Collect();

@@ -2,7 +2,7 @@ public class Education : Occupation
 {
 
     private string _status = "Not Attending";
-    private Random rand = new();
+    private Random _rand = new();
 
     public Education() : base("None")
     {
@@ -13,7 +13,7 @@ public class Education : Occupation
     {
         if (_status == "Attending")
         {
-            int x = rand.Next(0, GetBonus() + 1);
+            int x = _rand.Next(0, GetBonus() + 1);
             if (x <= 1)
             {
                 LevelUp();

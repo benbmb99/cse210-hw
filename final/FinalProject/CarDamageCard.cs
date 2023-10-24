@@ -26,6 +26,7 @@ public class CarDamageCard : DiceCard
             {
                 Car car = _cars[_rand.Next(0, _cars.Count())];
                 car.Crash();
+                Console.WriteLine($"Your {car.GetName()} was totaled. ");
             }
         }
     }

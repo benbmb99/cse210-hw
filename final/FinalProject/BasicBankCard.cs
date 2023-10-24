@@ -2,7 +2,7 @@ using System.Collections;
 
 public class BasicBankCard : Card
 {
-    private Bank _bank = new();
+    protected Bank _bank = new();
     private int _amount;
     private string _action;
 

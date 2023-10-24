@@ -64,4 +64,15 @@ public class Bank
         _cashInBank -= 2;
         Console.WriteLine("You paid your taxi fares of $2.");
     }
+
+    public int EndGame()
+    {
+        int finalValue = _cashInBank - _debt;
+        return finalValue;
+    }
+
+    public void FinalSell(int amount)
+    {
+        _cashInBank += amount;
+    }
 }

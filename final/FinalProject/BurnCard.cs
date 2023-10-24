@@ -32,6 +32,7 @@ public class BurnCard : Card
         }
         house.BurnItDown();
         _houses[i] = house;
+        Thread.Sleep(2000);
     }
 
     public override void SetParameters(ArrayList a)

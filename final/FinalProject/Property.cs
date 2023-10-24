@@ -3,11 +3,13 @@ public abstract class Property
     private string _name;
     private int _cost;
     protected string _owner = "Unowned";
+    private int _id;
 
-    public Property(string name, int cost)
+    public Property(string name, int cost, int id)
     {
         _name = name;
         _cost = cost;
+        _id = id;
     }
 
     public int GetCost()
@@ -37,4 +39,11 @@ public abstract class Property
     {
         _owner = "Unowned";
     }
+
+    public int GetID()
+    {
+        return _id;
+    }
+
+    public abstract void SellEnd(Bank bank);
 }

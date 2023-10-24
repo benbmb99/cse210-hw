@@ -4,9 +4,9 @@ public abstract class Card
 {
     private string _name;
     private string _details;
-    protected int _quantity;
+    private int _quantity;
     protected ArrayList _a = new();
-    protected string _cardType;
+    private string _cardType;
 
     public Card(string name, string details, int quantity, string cardType)
     {

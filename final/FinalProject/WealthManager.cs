@@ -5,11 +5,13 @@ using System.Security.Claims;
 public class WealthManager
 {
     private string _playerName;
+    private int _carsAvailable;
     private Job _myJob = new();
     private Education _myEducation = new();
     private List<Car> _myCars = new();
     private List<House> _myHouse = new();
     private List<Card> _myHand = new();
+    private List<Card> _oldHand = new();
     private Bank _myBank = new();
     private bool _isComplete = false;
     private bool _skipTurn = false;
@@ -18,6 +20,8 @@ public class WealthManager
     private bool _taxi = false;
     private bool _hasLicense = true;
     private int _cardsToCollect = 0;
+    private bool _conferance = true;
+    private int _turns = 1;
 
     public WealthManager(string name)
     {
@@ -35,7 +39,8 @@ public class WealthManager
             _skipTurn,
             _hasInsurance,
             _hasLicense,
-            _cardsToCollect
+            _cardsToCollect,
+            _conferance
         };
         return a;
     }
@@ -51,6 +56,7 @@ public class WealthManager
         _usedInsurance = !(bool)a[6];
         _hasLicense = (bool)a[7];
         _cardsToCollect = (int)a[8];
+        _conferance = (bool)a[9];
     }
 
     public ArrayList TakeTurn(ArrayList a, int numOfPlayers)
@@ -62,35 +68,58 @@ public class WealthManager
             if (numOfPlayers > 1)
             {
                 Console.WriteLine($"It is now {_playerName}'s turn.");
+                Thread.Sleep(1000);
             }
             if (_taxi)
             {
                 _myBank.PayFare();
             }
-            _myEducation.CheckConferance();
+            if (_conferance)
+            {
+                _myEducation.CheckConferance();
+                _conferance = true;
+            }
             CarDealership c = (CarDealership)a[0];
             Realtor r = (Realtor)a[1];
+            _carsAvailable = c.GetCarsAvailable();
             CardDeck cd = (CardDeck)a[2];
-            _myBank.CollectPaycheck(_myJob, _myEducation);
+            if (_hasLicense)
+            {
+                _myBank.CollectPaycheck(_myJob, _myEducation);
+            }
+            else
+            {
+                Education none = new();
+                _myBank.CollectPaycheck(_myJob, none);
+                _hasLicense = true;
+            }
             _myHand.Add(cd.PickCard());
             _myHand.Add(cd.PickCard());
             Console.WriteLine("You drew two cards.");
-            //See if there is a way to show what cards you drew. Maybe just print the hand if you can't.
-            Thread.Sleep(2000);
-            List<int> remove = new();
+            CheckCards();
+            Thread.Sleep(5000);
+            List<Card> remove = new();
             foreach (Card l in _myHand)
             {
-                if (l.GetCardType() == "auto" || (l.GetCardType() == "multiplayer" && numOfPlayers == 1))
+                if (l.GetCardType() == "auto" || (l.GetCardType() == "multiplayer" /* && numOfPlayers == 1 */)) //to be used when multiplayer is updated
                 {
-                    l.SetParameters(BuildInfoPacket());
-                    l.Use();
-                    l.ReturnNewData();
-                    remove.Add(_myHand.IndexOf(l));
+                    if (_turns == 1 && (l.GetName() == "Accident" || l.GetName() == "My House Burned" || l.GetName() == "Arsonist"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\"{l.GetName()}\" was played automatically!");
+                        l.SetParameters(BuildInfoPacket());
+                        l.Use();
+                        l.ReturnNewData();
+                        remove.Add(l);
+                    }
                 }
             }
-            foreach (int i in remove)
+            foreach (Card card in remove)
             {
-                _myHand.RemoveAt(i);
+                _myHand.Remove(card);
             }
             do
             {
@@ -99,30 +128,38 @@ public class WealthManager
                     bool done1 = false;
                     do
                     {
-                        Console.Write("\nYou don't have a car! Would you like to (1) buy a car or (2) use public transportation? ");
-                        try
+                        if (_carsAvailable > 0)
                         {
-                            Exception e = new();
-                            int choice = int.Parse(Console.ReadLine());
-                            if (choice == 1)
+                            Console.Write("\nYou don't have a car! Would you like to (1) buy a car or (2) use public transportation? ");
+                            try
                             {
-                                Console.WriteLine("You don't have a car! Let's buy one: ");
-                                ContactCarDealership(c);
-                                done1 = true;
+                                Exception e = new();
+                                int choice = int.Parse(Console.ReadLine());
+                                if (choice == 1)
+                                {
+                                    Console.WriteLine("You don't have a car! Let's buy one: ");
+                                    ContactCarDealership(c);
+                                    done1 = true;
+                                }
+                                else if (choice == 2)
+                                {
+                                    _taxi = true;
+                                    done1 = true;
+                                }
+                                else
+                                {
+                                    throw e;
+                                }
                             }
-                            else if (choice == 2)
+                            catch (Exception e)
                             {
-                                _taxi = true;
-                                done1 = true;
-                            }
-                            else
-                            {
-                                throw e;
+                                Console.WriteLine("Invalid Entry.");
                             }
                         }
-                        catch (Exception e)
+                        else
                         {
-                            Console.WriteLine("Invalid Entry.");
+                            Console.WriteLine("There are currently no cars available for purchase.\nAs a result, you are automatically enrolled in public transportation.\n If you want to change this, please try purchasing a car again later.");
+                            _taxi = true;
                         }
                     } while (!done1);
                 }
@@ -204,10 +241,23 @@ public class WealthManager
                     Console.WriteLine("Invalid Entry.");
                     Thread.Sleep(2000);
                 }
+                int count = 0;
+                while (_cardsToCollect > 0)
+                {
+                    _myHand.Add(cd.PickCard());
+                    _cardsToCollect--;
+                    count++;
+                }
+                if (count > 0)
+                {
+                    Console.WriteLine($"You drew {count} cards!");
+                }
+                CheckCards();
                 CheckProperty();
             } while (!done);
             CheckCompletion();
             ArrayList b = new() { c, r, _isComplete, cd };
+            _turns++;
             return b;
         }
         else
@@ -215,6 +265,7 @@ public class WealthManager
             Console.WriteLine($"It is {_playerName}'s turn, but we have to skip their turn.");
             Thread.Sleep(2000);
             _skipTurn = false;
+            _turns++;
             return a;
         }
     }
@@ -257,14 +308,16 @@ public class WealthManager
             } while (!done);
             if (_myHand[response - 1].GetCardType() == "multiplayer")
             {
-                //fill in here
+                //fill in here for multiplayer update
             }
             _myHand[response - 1].SetParameters(BuildInfoPacket());
             _myHand[response - 1].Use();
             _myHand[response - 1].ReturnNewData();
-            if (_myHand[response - 1].GetName() != "Insurance")
+            Console.WriteLine($".{_myHand[response - 1].GetName()}.");
+            if (!(_myHand[response - 1].GetType() is InsuranceCard))
             {
                 _myHand.RemoveAt(response - 1);
+                _oldHand.RemoveAt(response - 1);
             }
         }
         else
@@ -279,7 +332,14 @@ public class WealthManager
         Console.Clear();
         int house = r.DisplayHouses() - 1;
         ArrayList f = r.BuyHouse(house, _playerName, _myBank);
-        _myHouse.Add((House)f[0]);
+        if (house != -1)
+        {
+            _myHouse.Add((House)f[0]);
+        }
+        else
+        {
+            _myHouse.Add((CookieCutter)f[0]);
+        }
         _myBank = (Bank)f[1];
     }
 
@@ -538,5 +598,38 @@ public class WealthManager
             Console.WriteLine("Invalid entry. Please try again.");
         }
         Thread.Sleep(2000);
+    }
+
+    public void CheckCards()
+    {
+        foreach (Card c in _myHand)
+        {
+            if (!(_oldHand.Contains(c)))
+            {
+                Console.WriteLine($"You drew the card: {c.GetName()}");
+                Console.WriteLine($"   Description ---> {c.GetDetails()}");
+                _oldHand.Add(c);
+            }
+        }
+    }
+
+    public ArrayList EndGame()
+    {
+        List<Car> cars = new();
+        List<House> houses = new();
+        int finalValue;
+        foreach (Car c in _myCars)
+        {
+            c.SellEnd(_myBank);
+            cars.Add(c);
+        }
+        foreach (House h in _myHouse)
+        {
+            h.Sell(_myBank);
+            houses.Add(h);
+        }
+        finalValue = _myBank.EndGame();
+        ArrayList a = new() { cars, houses, finalValue, _playerName };
+        return a;
     }
 }
